@@ -1,0 +1,28 @@
+{
+  "name": "demo_cds",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@sap/cds": "^9",
+    "axios": "^1.11.0",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+"cds": {
+  "requires": {
+    "ZUI_GETEMPLOYEE_API": {
+      "kind": "odata-v2",
+      "model": "srv/external/ZUI_GETEMPLOYEE",
+      "credentials": {
+        "destination": "MyS4HANA_Destination"
+      }
+    }
+  }
+},
+  "private": true
+}
