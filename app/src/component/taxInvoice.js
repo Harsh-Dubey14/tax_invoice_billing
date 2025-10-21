@@ -11,6 +11,9 @@ import {
   Table,
   Tbody,
   Tr,
+  Th,
+  Thead,
+  Tfoot,
   Td,
   Image,
   HStack,
@@ -32,6 +35,7 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
   const so = selectedDoc.SalesOrders?.[0] || {};
   const HSN = selectedDoc.HSN?.[0] || {};
   const Tax = selectedDoc.Tax?.[0] || {};
+  const pricingElements = selectedDoc.PricingElements || [];
 
   const handleDownload = async () => {
     if (!invoiceRef.current) return;
@@ -86,9 +90,7 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                       boxSize="80px"
                       mb={2}
                     />
-                    <Text fontWeight="bold">
-                      {plant.PlantName || "MERIT POLYMERS PRIVATE LIMITED"}
-                    </Text>
+                    <Text fontWeight="bold">{plant.PlantName}</Text>
                     <Text>
                       {plant.StreetName
                         ? `${plant.StreetName}${
@@ -98,7 +100,8 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                     </Text>
                     <Text>GSTIN: {Tax.GST || "-"}</Text>
                     <Text>
-                      State: {plant.Region || "Dadra & Nagar Haveli and Daman & Diu"}
+                      State:{" "}
+                      {plant.Region || "Dadra & Nagar Haveli and Daman & Diu"}
                     </Text>
                     <Text>Email: sales@meritpolymers.com</Text>
                   </Td>
@@ -107,38 +110,58 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                       <Tbody>
                         <Tr>
                           <Td border="1px solid black">
-                            Invoice No: <b>{selectedDoc.BillingDocument.BillingDocument}</b>
+                            Invoice No:{" "}
+                            <b>{selectedDoc.BillingDocument.BillingDocument}</b>
                           </Td>
                           <Td border="1px solid black">
-                            Date: <b>{selectedDoc.BillingDocument.BillingDocumentDate}</b>
+                            Date:{" "}
+                            <b>
+                              {selectedDoc.BillingDocument.BillingDocumentDate}
+                            </b>
                           </Td>
                         </Tr>
                         <Tr>
                           <Td border="1px solid black">
                             Mode/Terms of Payment:{" "}
-                            <b>{selectedDoc.BillingDocument.PaymentTermsName || "-"}</b>
+                            <b>
+                              {selectedDoc.BillingDocument.PaymentTermsName ||
+                                "-"}
+                            </b>
                           </Td>
                           <Td border="1px solid black">
                             Destination:{" "}
-                            <b>{plant.CityName || selectedDoc.BillingDocument.destinationCountry || "-"}</b>
+                            <b>
+                              {plant.CityName ||
+                                selectedDoc.BillingDocument
+                                  .destinationCountry ||
+                                "-"}
+                            </b>
                           </Td>
                         </Tr>
                         <Tr>
                           <Td border="1px solid black">
-                            Buyer Order No: <b>{so.PurchaseOrderByCustomer || "-"}</b>
+                            Buyer Order No:{" "}
+                            <b>{so.PurchaseOrderByCustomer || "-"}</b>
                           </Td>
                           <Td border="1px solid black">
-                            Purchase Order Date: <b>{so.CustomerPurchaseOrderDate || "-"}</b>
+                            Purchase Order Date:{" "}
+                            <b>{so.CustomerPurchaseOrderDate || "-"}</b>
                           </Td>
                         </Tr>
                         <Tr>
                           <Td border="1px solid black">
                             Delivery Note No:{" "}
-                            <b>{selectedDoc.DeliveryItems?.[0]?.DeliveryDocument || "-"}</b>
+                            <b>
+                              {selectedDoc.DeliveryItems?.[0]
+                                ?.DeliveryDocument || "-"}
+                            </b>
                           </Td>
                           <Td border="1px solid black">
                             Delivery Note Date:{" "}
-                            <b>{selectedDoc.BillingDocument.BillingDocumentDate || "-"}</b>
+                            <b>
+                              {selectedDoc.BillingDocument
+                                .BillingDocumentDate || "-"}
+                            </b>
                           </Td>
                         </Tr>
                         <Tr>
@@ -147,7 +170,10 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                           </Td>
                           <Td border="1px solid black">
                             Motor Vehicle No:{" "}
-                            <b>{selectedDoc.BillingDocument.motorVehicleNo || "-"}</b>
+                            <b>
+                              {selectedDoc.BillingDocument.motorVehicleNo ||
+                                "-"}
+                            </b>
                           </Td>
                         </Tr>
                       </Tbody>
@@ -158,37 +184,51 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
             </Table>
 
             {/* Consignee / Buyer */}
-          <Table w="100%" mb={2} size="sm" variant="simple" color="black">
-  <Tbody>
-    <Tr>
-      {/* Consignee */}
-      <Td border="1px solid black" p={2}>
-        <Text fontWeight="bold">Consignee (Ship To):</Text>
-        <Text>{consignee.FullName || "-"}</Text>
-        <Text>
-          {consignee.StreetName
-            ? `${consignee.StreetName}${consignee.HouseNumber ? ", " + consignee.HouseNumber : ""}, ${consignee.CityName || ""}, ${consignee.CompanyPostalCode || ""}, ${consignee.Country || ""}`
-            : " "}
-        </Text>
-        <Text>{consignee.StreetPrefixName}{consignee.AdditionalStreetPrefixName}</Text>
-        <Text>GSTIN: {consignee.GSTIN || "-"}</Text>
-      </Td>
+            <Table w="100%" mb={2} size="sm" variant="simple" color="black">
+              <Tbody>
+                <Tr>
+                  {/* Consignee */}
+                  <Td border="1px solid black" p={2}>
+                    <Text fontWeight="bold">Consignee (Ship To):</Text>
+                    <Text>{consignee.FullName || "-"}</Text>
+                    <Text>
+                      {consignee.StreetName || consignee.StreetPrefixName
+                        ? `${
+                            consignee.StreetName || consignee.StreetPrefixName
+                          }${
+                            consignee.HouseNumber
+                              ? ", " + consignee.HouseNumber
+                              : ""
+                          }, ${consignee.CityName || ""}, ${
+                            consignee.StateName || ""
+                          } ${consignee.PostalCode || ""} ${
+                            consignee.Region || ""
+                          } ${consignee.Country || ""}`
+                        : "-"}
+                    </Text>
+                    <Text>GSTIN: {consignee.GSTIN || "-"}</Text>
+                  </Td>
 
-      {/* Buyer */}
-      <Td border="1px solid black" p={2}>
-        <Text fontWeight="bold">Buyer (Bill To):</Text>
-        <Text>{buyer.FullName || "-"}</Text>
-        <Text>
-          {buyer.StreetName
-            ? `${buyer.StreetName}${buyer.HouseNumber ? ", " + buyer.HouseNumber : ""}, ${buyer.CityName || ""}, ${buyer.CompanyPostalCode || ""}, ${buyer.Country || ""}`
-            : " "}
-        </Text>
-        <Text> {buyer.StreetPrefixName}{buyer.AdditionalStreetPrefixName}</Text>
-        <Text>GSTIN: {buyer.GSTIN || "-"}</Text>
-      </Td>
-    </Tr>
-  </Tbody>
-</Table>
+                  {/* Buyer */}
+                  <Td border="1px solid black" p={2}>
+                    <Text fontWeight="bold">Buyer (Bill To):</Text>
+                    <Text>{buyer.FullName || "-"}</Text>
+                    <Text>
+                      {buyer.StreetName || buyer.StreetPrefixName
+                        ? `${buyer.StreetName || buyer.StreetPrefixName}${
+                            buyer.HouseNumber ? ", " + buyer.HouseNumber : ""
+                          }, ${buyer.CityName || ""}, ${
+                            buyer.StateName || ""
+                          } ${buyer.PostalCode || ""} ${buyer.Region || ""} ${
+                            buyer.Country || ""
+                          }`
+                        : "-"}
+                    </Text>
+                    <Text>GSTIN: {buyer.GSTIN || "-"}</Text>
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
 
             {/* Items */}
             <Table
@@ -205,18 +245,24 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                   <Td border="1px solid black">Material Description</Td>
                   <Td border="1px solid black">HSN</Td>
                   <Td border="1px solid black">Quantity</Td>
-                  <Td border="1px solid black">Amount</Td>
                   <Td border="1px solid black">Rate</Td>
+                  <Td border="1px solid black">Amount</Td>
                 </Tr>
                 {items.length > 0 ? (
                   items.map((item, index) => (
                     <Tr key={index}>
                       <Td border="1px solid black">{index + 1}</Td>
-                      <Td border="1px solid black">{item.Description || "-"}</Td>
+                      <Td border="1px solid black" p={2}>
+                        <Text>{item.Description || "-"}</Text>
+                        <Text>{item.Batch || "-"}</Text>
+                      </Td>
                       <Td border="1px solid black">{HSN.HSN || "-"}</Td>
-                      <Td border="1px solid black">{item.quantity || "-"}</Td>
-                      <Td border="1px solid black">{item.amount || "-"}</Td>
+                      <Td border="1px solid black">
+                        {item.quantity || "-"}
+                        {item.unit || "-"}
+                      </Td>
                       <Td border="1px solid black">{item.rate || "-"}</Td>
+                      <Td border="1px solid black">{item.amount || "-"}</Td>
                     </Tr>
                   ))
                 ) : (
@@ -227,6 +273,184 @@ const InvoiceModal = ({ isOpen, onClose, selectedDoc }) => {
                   </Tr>
                 )}
               </Tbody>
+            </Table>
+
+            {/* Pricing Elements Table */}
+            <Table
+              size="sm"
+              variant="simple"
+              border="1px solid black"
+              w="100%"
+              mb={2}
+            >
+              <Thead bg="gray.100" fontWeight="bold">
+                <Tr>
+                  <Th border="1px solid black" rowSpan={2}>
+                    HSN/SAC
+                  </Th>
+                  <Th border="1px solid black" rowSpan={2}>
+                    Taxable Value
+                  </Th>
+                  {pricingElements.some((pe) => pe.igst !== 0) && (
+                    <Th border="1px solid black" colSpan={2} textAlign="center">
+                      IGST
+                    </Th>
+                  )}
+                  {pricingElements.some((pe) => pe.cgst !== 0) && (
+                    <Th border="1px solid black" colSpan={2} textAlign="center">
+                      CGST
+                    </Th>
+                  )}
+                  {pricingElements.some((pe) => pe.sgst !== 0) && (
+                    <Th border="1px solid black" colSpan={2} textAlign="center">
+                      SGST
+                    </Th>
+                  )}
+                  {pricingElements.some((pe) => pe.ugst !== 0) && (
+                    <Th border="1px solid black" colSpan={2} textAlign="center">
+                      UGST
+                    </Th>
+                  )}
+                  <Th border="1px solid black" rowSpan={2}>
+                    Total Tax Amount
+                  </Th>
+                </Tr>
+
+                <Tr>
+                  {pricingElements.some((pe) => pe.igst !== 0) && (
+                    <>
+                      <Th border="1px solid black">Rate</Th>
+                      <Th border="1px solid black">Amount</Th>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.cgst !== 0) && (
+                    <>
+                      <Th border="1px solid black">Rate</Th>
+                      <Th border="1px solid black">Amount</Th>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.sgst !== 0) && (
+                    <>
+                      <Th border="1px solid black">Rate</Th>
+                      <Th border="1px solid black">Amount</Th>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.ugst !== 0) && (
+                    <>
+                      <Th border="1px solid black">Rate</Th>
+                      <Th border="1px solid black">Amount</Th>
+                    </>
+                  )}
+                </Tr>
+              </Thead>
+
+              <Tbody>
+                {pricingElements && pricingElements.length > 0 ? (
+                  pricingElements.map((pe, index) => (
+                    <Tr key={index}>
+                      <Td border="1px solid black">{HSN.HSN ?? "-"}</Td>
+                      <Td border="1px solid black">{pe.TotalAmount ?? "-"}</Td>
+
+                      {pe.igst !== 0 && (
+                        <>
+                          <Td border="1px solid black">{pe.igst}</Td>
+                          <Td border="1px solid black">{pe.igstRate}</Td>
+                        </>
+                      )}
+                      {pe.cgst !== 0 && (
+                        <>
+                          <Td border="1px solid black">{pe.cgst}</Td>
+                          <Td border="1px solid black">{pe.cgstRate}</Td>
+                        </>
+                      )}
+                      {pe.sgst !== 0 && (
+                        <>
+                          <Td border="1px solid black">{pe.sgst}</Td>
+                          <Td border="1px solid black">{pe.sgstRate}</Td>
+                        </>
+                      )}
+                      {pe.ugst !== 0 && (
+                        <>
+                          <Td border="1px solid black">{pe.ugst}</Td>
+                          <Td border="1px solid black">{pe.ugstRate}</Td>
+                        </>
+                      )}
+
+                      <Td border="1px solid black">{pe.totalTax}</Td>
+                    </Tr>
+                  ))
+                ) : (
+                  <Tr>
+                    <Td border="1px solid black" colSpan={8} textAlign="center">
+                      No line item data available.
+                    </Td>
+                  </Tr>
+                )}
+              </Tbody>
+
+              <Tfoot fontWeight="bold">
+                <Tr>
+                  <Td border="1px solid black">TOTAL</Td>
+                  <Td border="1px solid black">
+                    {pricingElements.reduce(
+                      (sum, el) => sum + (el.TotalAmount || 0),
+                      0
+                    )}
+                  </Td>
+
+                  {pricingElements.some((pe) => pe.igst !== 0) && (
+                    <>
+                      <Td border="1px solid black">—</Td>
+                      <Td border="1px solid black">
+                        {pricingElements.reduce(
+                          (sum, el) => sum + (el.igstRate || 0),
+                          0
+                        )}
+                      </Td>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.cgst !== 0) && (
+                    <>
+                      <Td border="1px solid black">—</Td>
+                      <Td border="1px solid black">
+                        {pricingElements.reduce(
+                          (sum, el) => sum + (el.cgstRate || 0),
+                          0
+                        )}
+                      </Td>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.sgst !== 0) && (
+                    <>
+                      <Td border="1px solid black">—</Td>
+                      <Td border="1px solid black">
+                        {pricingElements.reduce(
+                          (sum, el) => sum + (el.sgstRate || 0),
+                          0
+                        )}
+                      </Td>
+                    </>
+                  )}
+                  {pricingElements.some((pe) => pe.ugst !== 0) && (
+                    <>
+                      <Td border="1px solid black">—</Td>
+                      <Td border="1px solid black">
+                        {pricingElements.reduce(
+                          (sum, el) => sum + (el.ugstRate || 0),
+                          0
+                        )}
+                      </Td>
+                    </>
+                  )}
+
+                  <Td border="1px solid black">
+                    {pricingElements.reduce(
+                      (sum, el) => sum + (el.totalTax || 0),
+                      0
+                    )}
+                  </Td>
+                </Tr>
+              </Tfoot>
             </Table>
 
             <Text mt={4} textAlign="center" fontWeight="bold">
