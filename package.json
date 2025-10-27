@@ -1,0 +1,35 @@
+{
+  "name": "demo_cds",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@sap/cds": "^9",
+    "axios": "^1.11.0",
+    "axios-cookiejar-support": "^6.0.4",
+    "corps": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4",
+    "tough-cookie": "^5.1.2"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "ZUI_GETEMPLOYEE_API": {
+        "kind": "odata-v2",
+        "model": "srv/external/ZUI_GETEMPLOYEE",
+        "credentials": {
+          "destination": "MyS4HANA_Destination"
+        }
+      }
+    }
+  },
+  "private": true
+}

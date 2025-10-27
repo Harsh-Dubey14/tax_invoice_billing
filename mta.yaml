@@ -1,0 +1,67 @@
+_schema-version: 3.3.0
+ID: demo_cds
+version: 1.0.0
+description: "CAP + React Fullstack App"
+
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+
+modules:
+  - name: demo_cds-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+      env:
+        ABAP_USER: abhishek1494
+        ABAP_PASS: FyfGjZXxZwtPu(uVR5XBqobbgDLVsahveXMQlmAe
+    build-parameters:
+      builder: npm-ci
+      # commands
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: demo_cds-destination
+
+  - name: frontend
+    type: html5
+    path: app
+    build-parameters:
+      builder: npm
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+    requires:
+      - name: srv-api
+    provides:
+      - name: ui
+        properties:
+          url: ${default-url}
+
+  - name: demo_cds-approuter
+    type: approuter.nodejs
+    path: approuter
+    parameters:
+      memory: 128M
+    requires:
+      - name: srv-api
+      - name: demo_cds-destination
+      - name: ui
+
+resources:
+  - name: demo_cds-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
