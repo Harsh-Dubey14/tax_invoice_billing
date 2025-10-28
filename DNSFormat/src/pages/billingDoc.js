@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useTheme } from "../theme/ThemeProviderWrapper";
-
 import {
   Box,
   Heading,
@@ -21,7 +20,6 @@ import {
   useToast,
   useColorModeValue,
 } from "@chakra-ui/react";
-
 import { MoonIcon, SunIcon, ViewIcon, DownloadIcon } from "@chakra-ui/icons";
 import InvoiceModal from "../component/taxInvoice";
 
@@ -40,12 +38,13 @@ const BillingDashboard = () => {
 
   const { colorMode, toggleColorMode } = useTheme();
 
-  // Color mode adaptive values
+  // ✅ Theme colors
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const tableBg = useColorModeValue("white", "gray.700");
   const tableHeaderBg = useColorModeValue("blue.100", "blue.900");
   const hoverBg = useColorModeValue("gray.100", "gray.600");
   const headingColor = useColorModeValue("blue.700", "blue.200");
+  const selectedRowBg = useColorModeValue("blue.50", "blue.900"); // ✅ hook used outside map
 
   useEffect(() => {
     const fetchBillingDocuments = async () => {
@@ -69,7 +68,7 @@ const BillingDashboard = () => {
     fetchBillingDocuments();
   }, [toast]);
 
-  // Filter documents whenever searchTerm changes
+  // ✅ Filter documents when search term changes
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredDocs(billingDocuments);
@@ -78,7 +77,7 @@ const BillingDashboard = () => {
         doc.BillingDocument.toString().includes(searchTerm.trim())
       );
       setFilteredDocs(filtered);
-      setCurrentPage(1); // Reset to first page
+      setCurrentPage(1);
     }
   }, [searchTerm, billingDocuments]);
 
@@ -131,7 +130,6 @@ const BillingDashboard = () => {
           Billing Document List
         </Heading>
         <HStack spacing={3}>
-          {/* Theme toggle button */}
           <IconButton
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
@@ -139,7 +137,6 @@ const BillingDashboard = () => {
             colorScheme="teal"
             aria-label="Toggle Theme"
           />
-          {/* View and Download buttons */}
           <IconButton
             icon={<ViewIcon />}
             colorScheme="blue"
@@ -163,7 +160,7 @@ const BillingDashboard = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           fontSize="sm"
           height="30px"
-          width="50%" // optional, adjust as needed
+          width="50%"
         />
       </Box>
 
@@ -188,28 +185,61 @@ const BillingDashboard = () => {
                   <Th>Division</Th>
                 </Tr>
               </Thead>
+
               <Tbody>
-                {paginatedData.map((doc) => (
-                  <Tr key={doc.BillingDocument} _hover={{ bg: hoverBg }}>
-                    <Td>
-                      <Checkbox
-                        isChecked={selectedDoc?.BillingDocument === doc.BillingDocument}
-                        onChange={() =>
-                          setSelectedDoc(
-                            selectedDoc?.BillingDocument === doc.BillingDocument ? null : doc
-                          )
+                {paginatedData.map((doc) => {
+                  const isSelected =
+                    selectedDoc?.BillingDocument === doc.BillingDocument;
+                  return (
+                    <Tr
+                      key={doc.BillingDocument}
+                      _hover={{ bg: hoverBg, cursor: "pointer" }}
+                      bg={isSelected ? selectedRowBg : "transparent"}
+                      onClick={() =>
+                        setSelectedDoc(isSelected ? null : doc)
+                      }
+                      onDoubleClick={async () => {
+                        setSelectedDoc(doc);
+                        const detailedDoc = await fetchDocumentDetails(
+                          doc.BillingDocument
+                        );
+                        if (detailedDoc) {
+                          setSelectedDoc(detailedDoc);
+                          setIsModalOpen(true);
                         }
-                      />
-                    </Td>
-                    <Td>{doc.BillingDocument}</Td>
-                    <Td>{doc.BillingDocumentDate}</Td>
-                    <Td>{doc.BillingDocumentType}</Td>
-                    <Td>{doc.CompanyCode}</Td>
-                    <Td>{doc.FiscalYear}</Td>
-                    <Td>{doc.salesOrganization}</Td>
-                    <Td>{doc.Division}</Td>
-                  </Tr>
-                ))}
+                      }}
+                      tabIndex={0}
+                      onKeyDown={async (e) => {
+                        if (e.key === "Enter" && isSelected) {
+                          const detailedDoc = await fetchDocumentDetails(
+                            doc.BillingDocument
+                          );
+                          if (detailedDoc) {
+                            setSelectedDoc(detailedDoc);
+                            setIsModalOpen(true);
+                          }
+                        }
+                      }}
+                    >
+                      <Td onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          isChecked={isSelected}
+                          onChange={(e) => {
+                            e.stopPropagation(); // ✅ prevents row click interference
+                            setSelectedDoc(isSelected ? null : doc);
+                          }}
+                        />
+                      </Td>
+                      <Td>{doc.BillingDocument}</Td>
+                      <Td>{doc.BillingDocumentDate}</Td>
+                      <Td>{doc.BillingDocumentType}</Td>
+                      <Td>{doc.CompanyCode}</Td>
+                      <Td>{doc.FiscalYear}</Td>
+                      <Td>{doc.salesOrganization}</Td>
+                      <Td>{doc.Division}</Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
 
@@ -225,7 +255,9 @@ const BillingDashboard = () => {
                 Page {currentPage} of {totalPages}
               </Box>
               <Button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -235,7 +267,7 @@ const BillingDashboard = () => {
         )}
       </Box>
 
-      {/* Modal */}
+      {/* Invoice Modal */}
       <InvoiceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

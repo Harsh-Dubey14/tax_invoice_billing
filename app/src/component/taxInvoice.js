@@ -33,8 +33,8 @@ const val = (v) =>
   typeof v === "object"
     ? NotAvailabaleValue
     : v !== undefined && v !== null && String(v).trim() !== ""
-      ? String(v)
-      : NotAvailabaleValue;
+    ? String(v)
+    : NotAvailabaleValue;
 
 const fix2 = (v) =>
   Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "0.00";
@@ -86,8 +86,8 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
   const copyLabels = (selectedDoc?.copyLabels || []).filter(Boolean);
 
   // If no labels are provided, add a default one so it doesn't crash
-  const finalCopyLabels = copyLabels.length > 0 ? copyLabels : ["Original for Recipient"];
-
+  const finalCopyLabels =
+    copyLabels.length > 0 ? copyLabels : ["Original for Recipient"];
 
   // build items similar to react-pdf mapping
   const items = useMemo(
@@ -104,8 +104,8 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
           it.batches?.length > 0
             ? it.batches.map((b) => ({ batch: b.batch || b.Batch, qty: b.qty }))
             : it.Batch
-              ? [{ batch: it.Batch, qty: it.quantity }]
-              : [];
+            ? [{ batch: it.Batch, qty: it.quantity }]
+            : [];
 
         return {
           hsn: HSN?.HSN || it.HSN || it.hsn || "-",
@@ -134,46 +134,46 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
     GstInWords: peTotals?.GstInWords || "",
     GrandTotalInWords: peTotals?.GrandTotalInWords || "",
   };
-const handleDownload = async () => {
-  if (!invoiceRef.current) return;
+  const handleDownload = async () => {
+    if (!invoiceRef.current) return;
 
-  const pages = invoiceRef.current.querySelectorAll(".invoice-page");
-  if (pages.length === 0) return;
+    const pages = invoiceRef.current.querySelectorAll(".invoice-page");
+    if (pages.length === 0) return;
 
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-  for (let i = 0; i < pages.length; i++) {
-    // Capture the full content, not just the visible area
-    const canvas = await html2canvas(pages[i], {
-      scale: 2, // high quality
-      useCORS: true,
-      scrollY: -window.scrollY, // ensure off-screen content is captured
-      windowWidth: document.body.scrollWidth,
-      windowHeight: document.body.scrollHeight,
-    });
+    for (let i = 0; i < pages.length; i++) {
+      // Capture the full content, not just the visible area
+      const canvas = await html2canvas(pages[i], {
+        scale: 2, // high quality
+        useCORS: true,
+        scrollY: -window.scrollY, // ensure off-screen content is captured
+        windowWidth: document.body.scrollWidth,
+        windowHeight: document.body.scrollHeight,
+      });
 
-    const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png");
 
-    // Get image size
-    const imgWidth = canvas.width;
-    const imgHeight = canvas.height;
+      // Get image size
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
 
-    // Scale to fit within one A4 page
-    const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-    const finalWidth = imgWidth * ratio;
-    const finalHeight = imgHeight * ratio;
+      // Scale to fit within one A4 page
+      const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+      const finalWidth = imgWidth * ratio;
+      const finalHeight = imgHeight * ratio;
 
-    const x = (pageWidth - finalWidth) / 2; // center horizontally
-    const y = (pageHeight - finalHeight) / 2; // center vertically
+      const x = (pageWidth - finalWidth) / 2; // center horizontally
+      const y = (pageHeight - finalHeight) / 2; // center vertically
 
-    if (i > 0) pdf.addPage();
-    pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight);
-  }
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight);
+    }
 
-  pdf.save(`Invoice_${billing?.BillingDocument || "invoice"}.pdf`);
-};
+    pdf.save(`Invoice_${billing?.BillingDocument || "invoice"}.pdf`);
+  };
 
   // --- Return JSX combining Modal and Invoice Content ---
   return (
@@ -226,7 +226,7 @@ const handleDownload = async () => {
                   "page-break-after": "always",
                   "&:last-child": {
                     "page-break-after": "unset",
-                    "mb": 0 // No margin on the last item
+                    mb: 0, // No margin on the last item
                   },
                 }}
               >
@@ -243,50 +243,52 @@ const handleDownload = async () => {
                       objectFit="contain"
                       mb={2}
                       // Add an error fallback
-                      onError={(e) => { e.target.style.display = 'none'; }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                      }}
                     />
                     <VStack align="start" spacing={0} fontSize="xs">
                       <Text>
-                        <b>IRN:{" "}</b>
+                        <b>IRN: </b>
                         {val(
                           selectedDoc?.document?.irn ??
-                          selectedDoc?.irnData?.irnNumber
+                            selectedDoc?.irnData?.irnNumber
                         )}
                       </Text>
 
                       <Text>
                         <Text>
-                          <b>Ack No:{" "}</b> 
+                          <b>Ack No: </b>
                           {val(
                             selectedDoc?.document?.ackNo ??
-                            selectedDoc?.irnData?.acknowledgementNumber
+                              selectedDoc?.irnData?.acknowledgementNumber
                           )}
                         </Text>
                       </Text>
                       <Text>
-                        <Text >
-                           <b>Ack Date:{" "}</b>
+                        <Text>
+                          <b>Ack Date: </b>
                           {val(
                             selectedDoc?.document?.ackDate ??
-                            selectedDoc?.irnData?.acknowledgementDate
+                              selectedDoc?.irnData?.acknowledgementDate
                           )}
                         </Text>
                       </Text>
                       <Text>
-                        <Text >
-                          <b>IRN Status:{" "}</b>
+                        <Text>
+                          <b>IRN Status: </b>
                           {val(
                             selectedDoc?.document?.irnStatus ??
-                            selectedDoc?.irnData?.irnStatus
+                              selectedDoc?.irnData?.irnStatus
                           )}
                         </Text>
                       </Text>
                       <Text>
-                        <Text >
-                          <b>EWay BillNo:{" "}</b>
+                        <Text>
+                          <b>EWay BillNo: </b>
                           {val(
                             selectedDoc?.document?.eWayBillNo ??
-                            selectedDoc?.irnData?.eWayBillNo
+                              selectedDoc?.irnData?.eWayBillNo
                           )}
                         </Text>
                       </Text>
@@ -311,7 +313,6 @@ const handleDownload = async () => {
                       {label} {/* Use the label from the map */}
                     </Text>
                     {/* ▲▲▲ END OF MODIFIED SECTION ▲▲▲ */}
-
                   </Box>
 
                   {/* Right: QR */}
@@ -353,16 +354,10 @@ const handleDownload = async () => {
                       </Square>
                     )}
                   </Box>
-
                 </Flex>
 
                 {/* Main Content Grid Box */}
-                <Box
-                  mt={3}
-                  border=" 1px"
-                  borderColor="black"
-                  fontSize="sm"
-                >
+                <Box mt={3} border=" 1px" borderColor="black" fontSize="sm">
                   {/* Row 1: Seller/Consignee/Buyer + Invoice Details */}
                   <Flex alignItems="stretch">
                     {/* Left Cell */}
@@ -380,27 +375,47 @@ const handleDownload = async () => {
                         </Text>
                         <Text fontSize="xs">
                           {plants?.StreetName
-                            ? `${plants.StreetName}${plants.HouseNumber ? ", " + plants.HouseNumber : ""}, `
+                            ? `${plants.StreetName}${
+                                plants.HouseNumber
+                                  ? ", " + plants.HouseNumber
+                                  : ""
+                              }, `
                             : ""}
                           {plants?.CityName || ""} {plants?.PostalCode || ""}
                         </Text>
                         <Text fontSize="xs">
-                          State Name: {plants?.Region || plants?.StateName || "-"}
+                          State Name:{" "}
+                          {plants?.Region || plants?.StateName || "-"}
                         </Text>
                         <Text fontSize="xs">GSTIN/UIN: {Tax?.GST || "-"}</Text>
-                        <Text fontSize="xs">E-Mail: sales@meritpolymers.com</Text>
+                        <Text fontSize="xs">
+                          E-Mail: sales@meritpolymers.com
+                        </Text>
                       </Box>
 
                       {/* Consignee Row */}
                       <Box borderBottom="1px" p={2} flex="1">
                         <Text fontWeight="bold">Consignee (Ship To)</Text>
-                        <Text>{val(consignee?.FullName || consignee?.name)}</Text>
+                        <Text>
+                          {val(consignee?.FullName || consignee?.name)}
+                        </Text>
                         <Text fontSize="xs">
                           {consignee?.StreetName || consignee?.StreetPrefixName
-                            ? `${consignee?.StreetName || consignee?.StreetPrefixName}${consignee?.HouseNumber ? ", " + consignee?.HouseNumber : ""}, ${consignee?.CityName || ""}, ${consignee?.StateName || ""} ${consignee?.PostalCode || ""}`
+                            ? `${
+                                consignee?.StreetName ||
+                                consignee?.StreetPrefixName
+                              }${
+                                consignee?.HouseNumber
+                                  ? ", " + consignee?.HouseNumber
+                                  : ""
+                              }, ${consignee?.CityName || ""}, ${
+                                consignee?.StateName || ""
+                              } ${consignee?.PostalCode || ""}`
                             : "-"}
                         </Text>
-                        <Text fontSize="xs">GSTIN: {val(consignee?.GSTIN)}</Text>
+                        <Text fontSize="xs">
+                          GSTIN: {val(consignee?.GSTIN)}
+                        </Text>
                       </Box>
 
                       {/* Buyer Row */}
@@ -409,7 +424,13 @@ const handleDownload = async () => {
                         <Text>{val(buyer?.FullName || buyer?.name)}</Text>
                         <Text fontSize="xs">
                           {buyer?.StreetName || buyer?.StreetPrefixName
-                            ? `${buyer?.StreetName || buyer?.StreetPrefixName}${buyer?.HouseNumber ? ", " + buyer?.HouseNumber : ""}, ${buyer?.CityName || ""}, ${buyer?.StateName || ""} ${buyer?.PostalCode || ""}`
+                            ? `${buyer?.StreetName || buyer?.StreetPrefixName}${
+                                buyer?.HouseNumber
+                                  ? ", " + buyer?.HouseNumber
+                                  : ""
+                              }, ${buyer?.CityName || ""}, ${
+                                buyer?.StateName || ""
+                              } ${buyer?.PostalCode || ""}`
                             : "-"}
                         </Text>
                         <Text fontSize="xs">GSTIN: {val(buyer?.GSTIN)}</Text>
@@ -417,7 +438,12 @@ const handleDownload = async () => {
                     </Box>
 
                     {/* Right Cell (Invoice Details Grid) */}
-                    <Box flex="1" display="flex" flexDirection="column" height="100%">
+                    <Box
+                      flex="1"
+                      display="flex"
+                      flexDirection="column"
+                      height="100%"
+                    >
                       <Flex>
                         <Box width="50%" p={2}>
                           <Text fontSize="xs">Invoice No.</Text>
@@ -436,12 +462,16 @@ const handleDownload = async () => {
                       <Flex borderTop="1px">
                         <Box width="50%" p={2}>
                           <Text fontSize="xs">Mode/Terms of Payment</Text>
-                          <Text fontWeight="bold">{val(billing?.PaymentTermsName)}</Text>
+                          <Text fontWeight="bold">
+                            {val(billing?.PaymentTermsName)}
+                          </Text>
                         </Box>
                         <Box width="50%" borderLeft="1px" p={2}>
                           <Text fontSize="xs">Destination</Text>
                           <Text fontWeight="bold">
-                            {val(plants?.CityName || billing?.destinationCountry)}
+                            {val(
+                              plants?.CityName || billing?.destinationCountry
+                            )}
                           </Text>
                         </Box>
                       </Flex>
@@ -453,7 +483,9 @@ const handleDownload = async () => {
                         </Box>
                         <Box width="50%" borderLeft="1px" p={2}>
                           <Text fontSize="xs">Country</Text>
-                          <Text fontWeight="bold">{billing?.destinationCountry}</Text>
+                          <Text fontWeight="bold">
+                            {billing?.destinationCountry}
+                          </Text>
                         </Box>
                       </Flex>
 
@@ -461,7 +493,9 @@ const handleDownload = async () => {
                         <Box width="50%" p={2}>
                           <Text fontSize="xs">Buyer Order No</Text>
                           <Text fontWeight="bold">
-                            {val(so?.PurchaseOrderByCustomer || so?.PurchaseOrder)}
+                            {val(
+                              so?.PurchaseOrderByCustomer || so?.PurchaseOrder
+                            )}
                           </Text>
                         </Box>
                         <Box width="50%" borderLeft="1px" p={2}>
@@ -476,12 +510,16 @@ const handleDownload = async () => {
                         <Box width="50%" p={2}>
                           <Text fontSize="xs">Delivery Note No</Text>
                           <Text fontWeight="bold">
-                            {val(selectedDoc.DeliveryItems?.[0]?.DeliveryDocument)}
+                            {val(
+                              selectedDoc.DeliveryItems?.[0]?.DeliveryDocument
+                            )}
                           </Text>
                         </Box>
                         <Box width="50%" borderLeft="1px" p={2}>
                           <Text fontSize="xs">Delivery Note Date</Text>
-                          <Text fontWeight="bold">{val(billing?.BillingDocumentDate)}</Text>
+                          <Text fontWeight="bold">
+                            {val(billing?.BillingDocumentDate)}
+                          </Text>
                         </Box>
                       </Flex>
 
@@ -492,7 +530,9 @@ const handleDownload = async () => {
                         </Box>
                         <Box width="50%" borderLeft="1px" p={2}>
                           <Text fontSize="xs">Motor Vehicle No</Text>
-                          <Text fontWeight="bold">{val(billing?.motorVehicleNo)}</Text>
+                          <Text fontWeight="bold">
+                            {val(billing?.motorVehicleNo)}
+                          </Text>
                         </Box>
                       </Flex>
 
@@ -501,19 +541,18 @@ const handleDownload = async () => {
                         <Box
                           width="100%"
                           p={2}
-                          height="100px"      // ✅ double height (about twice the others)
-                          minHeight="100px"   // ✅ ensure it stays tall even if empty
+                          height="100px" // ✅ double height (about twice the others)
+                          minHeight="100px" // ✅ ensure it stays tall even if empty
                           display="flex"
                           flexDirection="column"
                           text="bold"
                         >
-                          <Text fontSize="xs">Billing Instructions:{" "}</Text>
+                          <Text fontSize="xs">Billing Instructions: </Text>
                           <Text fontWeight="bold"></Text>
                         </Box>
                       </Flex>
                     </Box>
                   </Flex>
-
 
                   {/* Row 2: Items Table */}
                   <Flex borderTop=" 1px">
@@ -572,7 +611,12 @@ const handleDownload = async () => {
                           >
                             Rate
                           </Td>
-                          <Td borderBottom=" 1px" borderColor="black" textAlign="center" p={2}>
+                          <Td
+                            borderBottom=" 1px"
+                            borderColor="black"
+                            textAlign="center"
+                            p={2}
+                          >
                             Amount
                           </Td>
                         </Tr>
@@ -590,7 +634,14 @@ const handleDownload = async () => {
                                 {index + 1}
                               </Td>
 
-                              <Td borderRight=" 1px" borderColor="black" p={2} textAlign="left"> {/* Aligned left */}
+                              <Td
+                                borderRight=" 1px"
+                                borderColor="black"
+                                p={2}
+                                textAlign="left"
+                              >
+                                {" "}
+                                {/* Aligned left */}
                                 <Text>{item.raw.Description || "-"}</Text>
                                 {item.batches.length > 0 &&
                                   item.batches.map((b, i) => (
@@ -655,10 +706,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].totalDiscount.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -677,10 +725,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].totalFreight.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -699,10 +744,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].totalPacking.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -721,10 +763,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].totalInsurance.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -743,10 +782,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].overalTaxableAmount.toFixed(
                                     2
                                   )}
@@ -768,10 +804,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].overallIgst.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -779,7 +812,10 @@ const handleDownload = async () => {
                               <>
                                 {pricingElements[0]?.overallcgst > 0 && (
                                   <Tr>
-                                    <Td borderRight=" 1px" borderColor="black"></Td>
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>
                                     <Td
                                       borderRight=" 1px"
                                       borderColor="black"
@@ -788,20 +824,31 @@ const handleDownload = async () => {
                                     >
                                       CGST
                                     </Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                     <Td
-                                      p={2}
-                                      textAlign="center"
-                                    >
-                                      {pricingElements[0].overallcgst.toFixed(2)}
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td p={2} textAlign="center">
+                                      {pricingElements[0].overallcgst.toFixed(
+                                        2
+                                      )}
                                     </Td>
                                   </Tr>
                                 )}
                                 {pricingElements[0]?.overalugst > 0 && (
                                   <Tr>
-                                    <Td borderRight=" 1px" borderColor="black"></Td>
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>
                                     <Td
                                       borderRight=" 1px"
                                       borderColor="black"
@@ -810,20 +857,29 @@ const handleDownload = async () => {
                                     >
                                       UGST
                                     </Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                     <Td
-                                      p={2}
-                                      textAlign="center"
-                                    >
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td p={2} textAlign="center">
                                       {pricingElements[0].overalugst.toFixed(2)}
                                     </Td>
                                   </Tr>
                                 )}
                                 {pricingElements[0]?.overallsgst > 0 && (
                                   <Tr>
-                                    <Td borderRight=" 1px" borderColor="black"></Td>
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>
                                     <Td
                                       borderRight=" 1px"
                                       borderColor="black"
@@ -832,14 +888,22 @@ const handleDownload = async () => {
                                     >
                                       SGST
                                     </Td>
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                    <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                     <Td
-                                      p={2}
-                                      textAlign="center"
-                                    >
-                                      {pricingElements[0].overallsgst.toFixed(2)}
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td
+                                      borderRight=" 1px"
+                                      borderColor="black"
+                                    ></Td>{" "}
+                                    <Td p={2} textAlign="center">
+                                      {pricingElements[0].overallsgst.toFixed(
+                                        2
+                                      )}
                                     </Td>
                                   </Tr>
                                 )}
@@ -860,10 +924,7 @@ const handleDownload = async () => {
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
                                 <Td borderRight=" 1px" borderColor="black"></Td>{" "}
-                                <Td
-                                  p={2}
-                                  textAlign="center"
-                                >
+                                <Td p={2} textAlign="center">
                                   {pricingElements[0].totalRoundOff.toFixed(2)}
                                 </Td>
                               </Tr>
@@ -873,14 +934,50 @@ const handleDownload = async () => {
                               <>
                                 {/* Total Row */}
                                 <Tr>
-                                  <Td borderBottom="1px" borderTop="1px" borderRight="1px" borderColor="black" p={2} fontWeight="bold">
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderRight="1px"
+                                    borderColor="black"
+                                    p={2}
+                                    fontWeight="bold"
+                                  >
                                     Total
                                   </Td>
-                                  <Td borderBottom="1px" borderTop="1px" borderRight="1px" borderColor="black" p={2} textAlign="right"></Td>
-                                  <Td borderBottom="1px" borderTop="1px" borderRight="1px" borderColor="black"></Td>
-                                  <Td borderBottom="1px" borderTop="1px" borderRight="1px" borderColor="black"></Td>
-                                  <Td borderBottom="1px" borderTop="1px" borderRight="1px" borderColor="black"></Td>
-                                  <Td borderBottom="1px" borderTop="1px" borderColor="black" p={2} textAlign="center" fontWeight="bold">
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderRight="1px"
+                                    borderColor="black"
+                                    p={2}
+                                    textAlign="right"
+                                  ></Td>
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderRight="1px"
+                                    borderColor="black"
+                                  ></Td>
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderRight="1px"
+                                    borderColor="black"
+                                  ></Td>
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderRight="1px"
+                                    borderColor="black"
+                                  ></Td>
+                                  <Td
+                                    borderBottom="1px"
+                                    borderTop="1px"
+                                    borderColor="black"
+                                    p={2}
+                                    textAlign="center"
+                                    fontWeight="bold"
+                                  >
                                     {pricingElements[0].overallGrandTotal.toFixed(
                                       2
                                     )}
@@ -904,8 +1001,10 @@ const handleDownload = async () => {
                     >
                       <Tbody>
                         <Tr>
-                          <Td p={2}  borderColor="black">
-                            <Text fontWeight="bold" as="span">Amount In Words: </Text>
+                          <Td p={2} borderColor="black">
+                            <Text fontWeight="bold" as="span">
+                              Amount In Words:{" "}
+                            </Text>
                             {totals?.GrandTotalInWords
                               ? totals.GrandTotalInWords
                               : "N/A"}
@@ -916,209 +1015,341 @@ const handleDownload = async () => {
                   </Flex>
 
                   {/* Row 3: Pricing Elements (Tax) Table */}
-{/* Row 3: Pricing Elements (Tax) Table */}
-<Flex flexDirection="column" w="100%">
-  {/* Pricing Table */}
-  <Flex borderTop="1px" marginTop="-1px" w="100%">
-    <Table
-      size="sm"
-      variant="simple"
-      borderCollapse="collapse"
-      w="100%"
-      mb={2}
-      color="black"
-    >
-      <Thead fontWeight="bold" color="black" textAlign="center">
-        <Tr>
-          <Th borderBottom="1px" borderRight="1px" rowSpan={2} color="black" textAlign="center">
-            HSN/SAC
-          </Th>
-          <Th borderBottom="1px" borderRight="1px" rowSpan={2} color="black" textAlign="center">
-            Taxable Value
-          </Th>
+                  {/* Row 3: Pricing Elements (Tax) Table */}
+                  <Flex flexDirection="column" w="100%">
+                    {/* Pricing Table */}
+                    <Flex borderTop="1px" marginTop="-1px" w="100%">
+                      <Table
+                        size="sm"
+                        variant="simple"
+                        borderCollapse="collapse"
+                        w="100%"
+                        mb={2}
+                        color="black"
+                      >
+                        <Thead
+                          fontWeight="bold"
+                          color="black"
+                          textAlign="center"
+                        >
+                          <Tr>
+                            <Th
+                              borderBottom="1px"
+                              borderRight="1px"
+                              rowSpan={2}
+                              color="black"
+                              textAlign="center"
+                            >
+                              HSN/SAC
+                            </Th>
+                            <Th
+                              borderBottom="1px"
+                              borderRight="1px"
+                              rowSpan={2}
+                              color="black"
+                              textAlign="center"
+                            >
+                              Taxable Value
+                            </Th>
 
-          {pricingElements.some((pe) => pe.igst !== 0) && (
-            <Th borderBottom="1px" borderRight="1px" colSpan={2} textAlign="center" color="black">
-              IGST
-            </Th>
-          )}
-          {pricingElements.some((pe) => pe.cgst !== 0) && (
-            <Th borderBottom="1px" borderRight="1px" colSpan={2} textAlign="center" color="black">
-              CGST
-            </Th>
-          )}
-          {pricingElements.some((pe) => pe.sgst !== 0) && (
-            <Th borderBottom="1px" borderRight="1px" colSpan={2} textAlign="center" color="black">
-              SGST
-            </Th>
-          )}
-          {pricingElements.some((pe) => pe.ugst !== 0) && (
-            <Th borderBottom="1px" borderRight="1px" colSpan={2} textAlign="center" color="black">
-              UGST
-            </Th>
-          )}
+                            {pricingElements.some((pe) => pe.igst !== 0) && (
+                              <Th
+                                borderBottom="1px"
+                                borderRight="1px"
+                                colSpan={2}
+                                textAlign="center"
+                                color="black"
+                              >
+                                IGST
+                              </Th>
+                            )}
+                            {pricingElements.some((pe) => pe.cgst !== 0) && (
+                              <Th
+                                borderBottom="1px"
+                                borderRight="1px"
+                                colSpan={2}
+                                textAlign="center"
+                                color="black"
+                              >
+                                CGST
+                              </Th>
+                            )}
+                            {pricingElements.some((pe) => pe.sgst !== 0) && (
+                              <Th
+                                borderBottom="1px"
+                                borderRight="1px"
+                                colSpan={2}
+                                textAlign="center"
+                                color="black"
+                              >
+                                SGST
+                              </Th>
+                            )}
+                            {pricingElements.some((pe) => pe.ugst !== 0) && (
+                              <Th
+                                borderBottom="1px"
+                                borderRight="1px"
+                                colSpan={2}
+                                textAlign="center"
+                                color="black"
+                              >
+                                UGST
+                              </Th>
+                            )}
 
-          <Th borderBottom="1px" rowSpan={2} color="black" textAlign="center">
-            Total Tax Amount
-          </Th>
-        </Tr>
+                            <Th
+                              borderBottom="1px"
+                              rowSpan={2}
+                              color="black"
+                              textAlign="center"
+                            >
+                              Total Tax Amount
+                            </Th>
+                          </Tr>
 
-        <Tr>
-          {pricingElements.some((pe) => pe.igst !== 0) && (
-            <>
-              <Th border="1px" textAlign="center" color="black">Rate</Th>
-              <Th border="1px" textAlign="center" color="black">Amount</Th>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.cgst !== 0) && (
-            <>
-              <Th border="1px" textAlign="center" color="black">Rate</Th>
-              <Th border="1px" textAlign="center" color="black">Amount</Th>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.sgst !== 0) && (
-            <>
-              <Th border="1px" textAlign="center" color="black">Rate</Th>
-              <Th border="1px" textAlign="center" color="black">Amount</Th>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.ugst !== 0) && (
-            <>
-              <Th border="1px" textAlign="center" color="black">Rate</Th>
-              <Th border="1px" textAlign="center" color="black">Amount</Th>
-            </>
-          )}
-        </Tr>
-      </Thead>
+                          <Tr>
+                            {pricingElements.some((pe) => pe.igst !== 0) && (
+                              <>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Rate
+                                </Th>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Amount
+                                </Th>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.cgst !== 0) && (
+                              <>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Rate
+                                </Th>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Amount
+                                </Th>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.sgst !== 0) && (
+                              <>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Rate
+                                </Th>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Amount
+                                </Th>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.ugst !== 0) && (
+                              <>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Rate
+                                </Th>
+                                <Th
+                                  border="1px"
+                                  textAlign="center"
+                                  color="black"
+                                >
+                                  Amount
+                                </Th>
+                              </>
+                            )}
+                          </Tr>
+                        </Thead>
 
-      <Tbody color="black">
-        {pricingElements && pricingElements.length > 0 ? (
-          pricingElements.map((pe, index) => (
-            <Tr key={index} color="black">
-              <Td borderBottom="1px" borderRight="1px" textAlign="center">{HSN.HSN ?? "-"}</Td>
-              <Td border="1px" textAlign="center">
-                {fix2(pe.TaxableAmount ?? "-")}
-              </Td>
+                        <Tbody color="black">
+                          {pricingElements && pricingElements.length > 0 ? (
+                            pricingElements.map((pe, index) => (
+                              <Tr key={index} color="black">
+                                <Td
+                                  borderBottom="1px"
+                                  borderRight="1px"
+                                  textAlign="center"
+                                >
+                                  {HSN.HSN ?? "-"}
+                                </Td>
+                                <Td border="1px" textAlign="center">
+                                  {fix2(pe.TaxableAmount ?? "-")}
+                                </Td>
 
-              {pe.igst !== 0 && (
-                <>
-                  <Td border="1px" textAlign="center">{pe.igst}</Td>
-                  <Td border="1px" textAlign="center">{fix2(pe.igstRate)}</Td>
-                </>
-              )}
-              {pe.cgst !== 0 && (
-                <>
-                  <Td border="1px" textAlign="center">{pe.cgst}</Td>
-                  <Td border="1px" textAlign="center">{fix2(pe.cgstRate)}</Td>
-                </>
-              )}
-              {pe.sgst !== 0 && (
-                <>
-                  <Td border="1px" textAlign="center">{pe.sgst}</Td>
-                  <Td border="1px" textAlign="center">{fix2(pe.sgstRate)}</Td>
-                </>
-              )}
-              {pe.ugst !== 0 && (
-                <>
-                  <Td border="1px" textAlign="center">{pe.ugst}</Td>
-                  <Td border="1px" textAlign="center">{fix2(pe.ugstRate)}</Td>
-                </>
-              )}
+                                {pe.igst !== 0 && (
+                                  <>
+                                    <Td border="1px" textAlign="center">
+                                      {pe.igst}
+                                    </Td>
+                                    <Td border="1px" textAlign="center">
+                                      {fix2(pe.igstRate)}
+                                    </Td>
+                                  </>
+                                )}
+                                {pe.cgst !== 0 && (
+                                  <>
+                                    <Td border="1px" textAlign="center">
+                                      {pe.cgst}
+                                    </Td>
+                                    <Td border="1px" textAlign="center">
+                                      {fix2(pe.cgstRate)}
+                                    </Td>
+                                  </>
+                                )}
+                                {pe.sgst !== 0 && (
+                                  <>
+                                    <Td border="1px" textAlign="center">
+                                      {pe.sgst}
+                                    </Td>
+                                    <Td border="1px" textAlign="center">
+                                      {fix2(pe.sgstRate)}
+                                    </Td>
+                                  </>
+                                )}
+                                {pe.ugst !== 0 && (
+                                  <>
+                                    <Td border="1px" textAlign="center">
+                                      {pe.ugst}
+                                    </Td>
+                                    <Td border="1px" textAlign="center">
+                                      {fix2(pe.ugstRate)}
+                                    </Td>
+                                  </>
+                                )}
 
-              <Td borderBottom="1px" textAlign="center">
-                {fix2(pe.finalGstRate || 0)}
-              </Td>
-            </Tr>
-          ))
-        ) : (
-          <Tr>
-            <Td border="1px" colSpan={8} textAlign="center">
-              No line item data available.
-            </Td>
-          </Tr>
-        )}
-      </Tbody>
+                                <Td borderBottom="1px" textAlign="center">
+                                  {fix2(pe.finalGstRate || 0)}
+                                </Td>
+                              </Tr>
+                            ))
+                          ) : (
+                            <Tr>
+                              <Td border="1px" colSpan={8} textAlign="center">
+                                No line item data available.
+                              </Td>
+                            </Tr>
+                          )}
+                        </Tbody>
 
-      <Tfoot fontWeight="bold" color="black">
-        <Tr>
-          <Td borderBottom="1px" borderRight="1px" textAlign="center">
-            TOTAL
-          </Td>
-          <Td borderBottom="1px" borderRight="1px" textAlign="center">
-            {fix2(pricingElements[0]?.overalTaxableAmount || 0)}
-          </Td>
+                        <Tfoot fontWeight="bold" color="black">
+                          <Tr>
+                            <Td
+                              borderBottom="1px"
+                              borderRight="1px"
+                              textAlign="center"
+                            >
+                              TOTAL
+                            </Td>
+                            <Td
+                              borderBottom="1px"
+                              borderRight="1px"
+                              textAlign="center"
+                            >
+                              {fix2(
+                                pricingElements[0]?.overalTaxableAmount || 0
+                              )}
+                            </Td>
 
-          {pricingElements.some((pe) => pe.igst !== 0) && (
-            <>
-              <Td border="1px" textAlign="center">—</Td>
-              <Td border="1px" textAlign="center">
-                {fix2(pricingElements[0]?.overallIgst || 0)}
-              </Td>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.cgst !== 0) && (
-            <>
-              <Td border="1px" textAlign="center">—</Td>
-              <Td border="1px" textAlign="center">
-                {fix2(pricingElements[0]?.overallcgst || 0)}
-              </Td>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.sgst !== 0) && (
-            <>
-              <Td border="1px" textAlign="center">—</Td>
-              <Td border="1px" textAlign="center">
-                {fix2(pricingElements[0]?.overallsgst || 0)}
-              </Td>
-            </>
-          )}
-          {pricingElements.some((pe) => pe.ugst !== 0) && (
-            <>
-              <Td border="1px" textAlign="center">—</Td>
-              <Td border="1px" textAlign="center">
-                {fix2(pricingElements[0]?.overalugst || 0)}
-              </Td>
-            </>
-          )}
+                            {pricingElements.some((pe) => pe.igst !== 0) && (
+                              <>
+                                <Td border="1px" textAlign="center">
+                                  —
+                                </Td>
+                                <Td border="1px" textAlign="center">
+                                  {fix2(pricingElements[0]?.overallIgst || 0)}
+                                </Td>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.cgst !== 0) && (
+                              <>
+                                <Td border="1px" textAlign="center">
+                                  —
+                                </Td>
+                                <Td border="1px" textAlign="center">
+                                  {fix2(pricingElements[0]?.overallcgst || 0)}
+                                </Td>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.sgst !== 0) && (
+                              <>
+                                <Td border="1px" textAlign="center">
+                                  —
+                                </Td>
+                                <Td border="1px" textAlign="center">
+                                  {fix2(pricingElements[0]?.overallsgst || 0)}
+                                </Td>
+                              </>
+                            )}
+                            {pricingElements.some((pe) => pe.ugst !== 0) && (
+                              <>
+                                <Td border="1px" textAlign="center">
+                                  —
+                                </Td>
+                                <Td border="1px" textAlign="center">
+                                  {fix2(pricingElements[0]?.overalugst || 0)}
+                                </Td>
+                              </>
+                            )}
 
-          <Td borderBottom="1px" textAlign="center">
-            {fix2(pricingElements[0]?.overallGST || 0)}
-          </Td>
-        </Tr>
-      </Tfoot>
-    </Table>
-  </Flex>
-
-  {/* Total GST (in words) Table */}
-  <Flex w="100%" mt={1}>
-    <Table
-      size="sm"
-      variant="unstyled"
-      sx={{ borderCollapse: "collapse" }}
-      w="100%"
-      color="black"
-      
-    >
-      <Tbody>
-        <Tr>
-          <Td justifyContent="center" colSpan={2} textAlign="left" p={4} >
-            <b>Total GST (in words):</b> {pricingElements[0]?.GstInWords || "—"}
-          </Td>
-        </Tr>
-      </Tbody>
-    </Table>
-  </Flex>
-</Flex>
-
+                            <Td borderBottom="1px" textAlign="center">
+                              {fix2(pricingElements[0]?.overallGST || 0)}
+                            </Td>
+                          </Tr>
+                        </Tfoot>
+                      </Table>
+                    </Flex>
+                  </Flex>
+                  <Flex w="100%" mt={1}>
+                    <Table
+                      size="sm"
+                      variant="unstyled"
+                      sx={{ borderCollapse: "collapse" }}
+                      w="100%"
+                      color="black"
+                    >
+                      <Tbody>
+                        <Tr>
+                          <Td
+                            justifyContent="center"
+                            colSpan={2}
+                            textAlign="left"
+                            p={2}
+                          >
+                            <b>Total GST (in words):</b>{" "}
+                            {pricingElements[0]?.GstInWords || "—"}
+                          </Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                  </Flex>
 
                   {/* Row 4: Footer Section */}
                   <Flex>
-                    <Box
-                      fontSize="sm"
-                      w="100%"
-                    >
+                    <Box fontSize="sm" w="100%">
                       {/* Row 2: Company PAN + Declaration + Bank Details */}
-                      <Flex  borderTop ="1px" borderBottom=" 1px">
+                      <Flex borderTop="1px" borderBottom=" 1px">
                         {/* Left Cell */}
                         <Box flex="1" borderRight=" 1px" p={2}>
                           <Text fontWeight="bold">Company's PAN</Text>
@@ -1130,7 +1361,7 @@ const handleDownload = async () => {
                           <Text fontSize="sm">
                             {val(
                               selectedDoc?.declaration ||
-                              "We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct."
+                                "We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct."
                             )}
                           </Text>
                         </Box>
@@ -1188,8 +1419,7 @@ const handleDownload = async () => {
                 <Flex justify="center" align="center" mt={2}>
                   <Box textAlign="center">
                     <Text>
-                      {plants.subjectToJurisdiction ||
-                        "Jurisdiction: N/A"}
+                      {plants.subjectToJurisdiction || "Jurisdiction: N/A"}
                     </Text>
                     <Text>
                       {selectedDoc?.document?.type === "CREDIT NOTE"
@@ -1200,7 +1430,6 @@ const handleDownload = async () => {
                 </Flex>
 
                 {/* --- End of original invoice content --- */}
-
               </Box>
             ))}
             {/* ▲▲▲ END OF THE MAP FUNCTION ▲▲▲ */}
