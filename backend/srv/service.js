@@ -504,8 +504,9 @@ const plantPromises = [...plantIds].map(async (id) => {
           HouseNumber: plant.HouseNumber || null,
           CityName: plant.CityName || null,
           PostalCode: plant.PostalCode || null,
-          Region: regionName || null,
+          // Region: regionName || null,
           Country: plant.Country || null,
+          State: stateCodeMap[plant.Region],
           BusinessPlace: plant.BusinessPlace || null,
           subjectToJurisdiction: regionName
             ? `SUBJECT TO ${regionName.toUpperCase()} JURISDICTION`

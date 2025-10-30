@@ -247,12 +247,9 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
 
                 {/* ✅ Row 2: Logo + Seller Info + QR Box */}
                 <Box border="1px" borderColor="black" p={3} mb={0}>
-                  <Flex
-                    align="flex-start"
-                    justify="space-between"
-                  >
+                  <Flex align="flex-start" justify="space-between">
                     {/* Left: Logo + IRN Info */}
-                    <Box >
+                    <Box>
                       <Image
                         src="/merit_logo.png"
                         alt="logo"
@@ -303,7 +300,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         {plants?.CityName || ""} {plants?.PostalCode || ""}
                       </Text>
                       <Text fontSize="xs">
-                        State: {plants?.Region || plants?.StateName || "-"}
+                        State: {plants?.State?.name || "-"}
                       </Text>
                       <Text fontSize="xs">
                         E-Mail: sales@meritpolymers.com- phone no : 022 -
@@ -316,8 +313,8 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                     </Box>
 
                     {/* Right: QR Code */}
-                    <Box justifyContent="center"  maxW="40%" ml="20px">
-                      <Text  justifyContent="center" fontSize="xs" mb={1}>
+                    <Box justifyContent="center" maxW="40%" ml="20px">
+                      <Text justifyContent="center" fontSize="xs" mb={1}>
                         E-Invoice QR
                       </Text>
                       {qrImage ? (
@@ -557,7 +554,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                   </Flex>
 
                   {/* Row 2: Items Table */}
-                      <Flex borderTop=" 1px">
+                  <Flex borderTop=" 1px">
                     <Table
                       size="sm"
                       variant="unstyled" // Using unstyled and adding borders manually
@@ -706,41 +703,39 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         {pricingElements.length > 0 && (
                           <>
                             <Tr>
-                                <Td borderColor="black"></Td>
-                                <Td borderColor="black"  textAlign="center">
-                                  <b> As per Challan Attached</b>
-                                  
-                                </Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black">Total :</Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td p={2} textAlign="center">
-                                </Td>
-                              </Tr>
-                               <Tr>
-                                <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="center">
-                                  <b> PO NO :</b>
-                                  
-                                </Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td p={2} textAlign="center">
-                                </Td>
-                              </Tr>
+                              <Td borderColor="black"></Td>
+                              <Td borderColor="black" textAlign="center">
+                                <b> As per Challan Attached</b>
+                              </Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black">Total :</Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td p={2} textAlign="center"></Td>
+                            </Tr>
+                            <Tr>
+                              <Td borderColor="black"></Td>
+                              <Td borderColor="black" p={2} textAlign="center">
+                                <b> PO NO :</b>
+                              </Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td p={2} textAlign="center"></Td>
+                            </Tr>
                             {pricingElements[0]?.totalDiscount !== 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>{" "}
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
@@ -755,9 +750,11 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                             {pricingElements[0]?.totalFreight > 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>{" "}
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
@@ -772,9 +769,11 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                             {pricingElements[0]?.totalPacking > 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>{" "}
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
@@ -789,13 +788,15 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                             {pricingElements[0]?.totalInsurance > 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>{" "}
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
-                                  <Td borderColor="black">Insurance :</Td>{" "}
+                                <Td borderColor="black">Insurance :</Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td p={2} textAlign="center">
@@ -806,13 +807,17 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                             {pricingElements[0]?.overalTaxableAmount > 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
+                                <Td borderColor="black"></Td>{" "}
+                                <Td borderColor="black"></Td>{" "}
+                                <Td borderColor="black"></Td>{" "}
+                                <Td borderColor="black">
+                                  Total Taxable Value :
                                 </Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                  <Td borderColor="black">Total Taxable Value :</Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td p={2} textAlign="center">
@@ -826,12 +831,14 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                             {pricingElements[0]?.overallIgst > 0 ? (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>{" "}
+                                <Td
+                                  borderColor="black"
+                                  p={2}
+                                  textAlign="right"
+                                ></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
-                                  <Td borderColor="black"></Td>{" "}
+                                <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black">IGST :</Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td textAlign={"center"} borderColor="black">
@@ -850,14 +857,12 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                                       borderColor="black"
                                       p={2}
                                       textAlign="right"
-                                    >
-                                      
-                                    </Td>{" "}
+                                    ></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
-                                      <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black">CGST :</Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black">CGST :</Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black">
                                       {pricingElements[0].cgst}%
                                     </Td>{" "}
@@ -875,14 +880,12 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                                       borderColor="black"
                                       p={2}
                                       textAlign="right"
-                                    >
-                                     
-                                    </Td>{" "}
+                                    ></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
-                                      <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black">UGST :</Td>{" "}
-                                <Td borderColor="black"> </Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black">UGST :</Td>{" "}
+                                    <Td borderColor="black"> </Td>{" "}
                                     <Td borderColor="black">
                                       {pricingElements[0].ugst}%
                                     </Td>{" "}
@@ -898,14 +901,12 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                                       borderColor="black"
                                       p={2}
                                       textAlign="right"
-                                    >
-                                      
-                                    </Td>
+                                    ></Td>
                                     <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
-                                      <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black">SGST :</Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black">SGST :</Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black" textAlign="center">
                                       {pricingElements[0].sgst}%
                                     </Td>{" "}
@@ -916,57 +917,53 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                                     </Td>
                                   </Tr>
                                 )}
-                                 {pricingElements[0]?.overallGST > 0 && (
+                                {pricingElements[0]?.overallGST > 0 && (
                                   <Tr>
                                     <Td borderColor="black"></Td>
                                     <Td
                                       borderColor="black"
                                       p={2}
                                       textAlign="right"
-                                    >
-                                       
-                                    </Td>
+                                    ></Td>
                                     <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black"></Td>{" "}
-                                      <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black">GST Sub Total (Charges) :</Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
                                     <Td borderColor="black">
+                                      GST Sub Total (Charges) :
                                     </Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
+                                    <Td borderColor="black"></Td>{" "}
                                     <Td p={2} textAlign="center">
-                                      {pricingElements[0].overallGST.toFixed(
-                                        2
-                                      )}
+                                      {pricingElements[0].overallGST.toFixed(2)}
                                     </Td>
                                   </Tr>
                                 )}
                               </>
                             )}
-                             <Tr>
-                                <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                  <Td borderColor="black"> Total Value :</Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td borderColor="black"></Td>{" "}
-                                <Td p={2} textAlign="center">
-                                </Td>
-                              </Tr>
+                            <Tr>
+                              <Td borderColor="black"></Td>
+                              <Td
+                                borderColor="black"
+                                p={2}
+                                textAlign="right"
+                              ></Td>
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"> Total Value :</Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td borderColor="black"></Td>{" "}
+                              <Td p={2} textAlign="center"></Td>
+                            </Tr>
 
                             {pricingElements[0]?.totalRoundOff !== 0 && (
                               <Tr>
                                 <Td borderColor="black"></Td>
-                                <Td borderColor="black" p={2} textAlign="right">
-                                  
-                                </Td>
+                                <Td ></Td>
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
-                                  <Td borderColor="black">Rounded off :</Td>{" "}
+                                <Td borderColor="black">Rounded off :</Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td borderColor="black"></Td>{" "}
                                 <Td p={2} textAlign="center">
@@ -990,12 +987,13 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                                     textAlign="center"
                                   >
                                     {" "}
-                                   
                                   </Td>
                                   <Td borderColor="black"></Td>
                                   <Td borderColor="black"></Td>
                                   <Td borderColor="black"></Td>
-                                  <Td borderColor="black" >Total Value Of Goods (In Word):</Td>
+                                  <Td borderColor="black">
+                                    Total Value Of Goods (In Word):
+                                  </Td>
                                   <Td borderColor="black"></Td>
                                   <Td borderColor="black"></Td>
                                   <Td
@@ -1028,7 +1026,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         <Tr>
                           <Td p={2} borderColor="black">
                             <Text as="span">
-                               Total Taxes Payable (In Word) :{" "}
+                              Total Taxes Payable (In Word) :{" "}
                             </Text>
                             {pricingElements[0]?.GstInWords || "—"}
                           </Td>
@@ -1036,7 +1034,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         <Tr>
                           <Td p={2} borderColor="black">
                             <Text as="span">
-                             Total Value of Goods in (Figures):{" "}
+                              Total Value of Goods in (Figures):{" "}
                             </Text>
                             {totals?.GrandTotalInWords
                               ? totals.GrandTotalInWords
@@ -1053,23 +1051,21 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                       {/* Row 2: Company PAN + Declaration + Bank Details */}
                       <Flex borderTop="1px">
                         {/* Left Cell: Blank */}
-                        <Box
-                          flex="8"
-                          borderRight="1px"
-                        >
-                        <Box w="100%" borderBottom = "1px" p={7}>
-                          {/* Intentionally left blank */}
-                        </Box>
+                        <Box flex="8" borderRight="1px">
+                          <Box w="100%" borderBottom="1px" p={7}>
+                            {/* Intentionally left blank */}
+                          </Box>
 
-                        {/* Middle Cell: Office Address */}
-                        <Box p={2}>
-                          <Text>
-                            <b>REG. OFFICE :</b> UNIT NO. 1701, 17TH FLOOR,
-                            SUPREME HEADQUARTERS, JUNCTION OF 14TH & 33RD ROAD,
-                            BANDRA WEST, MUMBAI, 400050, MAHARASHTRA, INDIA.
-                          </Text>
+                          {/* Middle Cell: Office Address */}
+                          <Box p={2}>
+                            <Text>
+                              <b>REG. OFFICE :</b> UNIT NO. 1701, 17TH FLOOR,
+                              SUPREME HEADQUARTERS, JUNCTION OF 14TH & 33RD
+                              ROAD, BANDRA WEST, MUMBAI, 400050, MAHARASHTRA,
+                              INDIA.
+                            </Text>
+                          </Box>
                         </Box>
-                       </Box>       
                         {/* Right Cell: Authorization Small Width */}
                         <Box flex="2" fontWeight="bold" p={2} textAlign="right">
                           <Text>
@@ -1091,9 +1087,15 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                   <Box fontSize="sm" w="100%">
                     <Flex borderBottom=" 1px">
                       <Box flex="1" borderRight=" 1px" borderLeft=" 1px" p={2}>
-                        <Text>Terms : No complaint in respect of material supplied vide this invoice will be entertained, unless the same is lodged in writing within 
-8 Days after receipt of Goods, our Responsibility regarding quality of yarn ceases once the goods are converted. Interest @ 30% p.a. 
-will be charged if invoice is not paid by due dates.</Text>
+                        <Text>
+                          Terms : No complaint in respect of material supplied
+                          vide this invoice will be entertained, unless the same
+                          is lodged in writing within 8 Days after receipt of
+                          Goods, our Responsibility regarding quality of yarn
+                          ceases once the goods are converted. Interest @ 30%
+                          p.a. will be charged if invoice is not paid by due
+                          dates.
+                        </Text>
                       </Box>
                     </Flex>
                   </Box>

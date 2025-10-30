@@ -14,14 +14,29 @@ import {
   Center,
   HStack,
   Button,
+  Badge,
   Checkbox,
   IconButton,
   Input,
   useToast,
   useColorModeValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { MoonIcon, SunIcon, ViewIcon, DownloadIcon } from "@chakra-ui/icons";
+import {
+  MoonIcon,
+  SunIcon,
+  ViewIcon,
+  DownloadIcon,
+  ChevronDownIcon,
+} from "@chakra-ui/icons";
+
 import InvoiceModal from "../component/taxInvoice";
+import DNSFormat from "../component/DNSFormat";
+import NewFormat from "../component/newFormat";
+import Random from "../component/random"; // ✅ Fixed uppercase import
 
 const API_BASE_URL = "http://localhost:4004/api/v1";
 const ITEMS_PER_PAGE = 10;
@@ -34,6 +49,7 @@ const BillingDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedModal, setSelectedModal] = useState("Tax Invoice");
   const toast = useToast();
 
   const { colorMode, toggleColorMode } = useTheme();
@@ -44,8 +60,9 @@ const BillingDashboard = () => {
   const tableHeaderBg = useColorModeValue("blue.100", "blue.900");
   const hoverBg = useColorModeValue("gray.100", "gray.600");
   const headingColor = useColorModeValue("blue.700", "blue.200");
-  const selectedRowBg = useColorModeValue("blue.50", "blue.900"); // ✅ hook used outside map
+  const selectedRowBg = useColorModeValue("blue.50", "blue.900");
 
+  // ✅ Fetch billing documents
   useEffect(() => {
     const fetchBillingDocuments = async () => {
       try {
@@ -142,27 +159,92 @@ const BillingDashboard = () => {
             colorScheme="blue"
             variant="outline"
             onClick={handlePreview}
+            isDisabled={!selectedDoc} // ✅ safer
           />
           <IconButton
             icon={<DownloadIcon />}
             colorScheme="green"
             variant="outline"
-            onClick={handlePreview}
+            onClick={handlePreview} // TODO: Replace with real download later
+            isDisabled={!selectedDoc} // ✅ safer
           />
         </HStack>
       </HStack>
 
-      {/* Search Input */}
-      <Box mb={2}>
+      {/* ✅ Search Input + Dropdown Button */}
+      <HStack mb={4} justify="space-between">
         <Input
           placeholder="Search by BillingDocument"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           fontSize="sm"
           height="30px"
-          width="50%"
+          width="30%"
         />
-      </Box>
+
+        {/* ✅ Dropdown Button for selecting component */}
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+            colorScheme="blue"
+            size="sm"
+          >
+            {selectedModal}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => setSelectedModal("Tax Invoice")}>
+              Tax Invoice
+            </MenuItem>
+            <MenuItem onClick={() => setSelectedModal("DNS Format")}>
+              DNS Format
+            </MenuItem>
+            <MenuItem onClick={() => setSelectedModal("New Format")}>
+              New Format
+            </MenuItem>
+            <MenuItem onClick={() => setSelectedModal("Random")}>
+              Random
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </HStack>
+
+      {/* ✅ Show selected Billing Document */}
+        <HStack mb={4}>
+          <Badge colorScheme="blue" fontSize="md">
+            Selected Billing Document:{" "}
+            {String(
+              selectedDoc?.BillingDocument?.billingDocumentID ||
+                selectedDoc?.BillingDocument ||
+                selectedDoc?.billingDocumentID ||
+                "N/A"
+            )}
+          </Badge>
+          <Button
+            size="sm"
+            colorScheme="blue"
+            onClick={async () => {
+              if (!selectedDoc) {
+                toast({
+                  title: "Please select a document first",
+                  status: "warning",
+                  duration: 2500,
+                  isClosable: true,
+                });
+                return;
+              }
+              const detailedDoc = await fetchDocumentDetails(
+                selectedDoc.BillingDocument
+              );
+              if (detailedDoc) {
+                setSelectedDoc(detailedDoc);
+                setIsModalOpen(true);
+              }
+            }}
+          >
+            Preview
+          </Button>
+        </HStack>
 
       {/* Table */}
       <Box p={4} bg={tableBg} borderRadius="md" boxShadow="lg" overflowX="auto">
@@ -195,9 +277,7 @@ const BillingDashboard = () => {
                       key={doc.BillingDocument}
                       _hover={{ bg: hoverBg, cursor: "pointer" }}
                       bg={isSelected ? selectedRowBg : "transparent"}
-                      onClick={() =>
-                        setSelectedDoc(isSelected ? null : doc)
-                      }
+                      onClick={() => setSelectedDoc(isSelected ? null : doc)}
                       onDoubleClick={async () => {
                         setSelectedDoc(doc);
                         const detailedDoc = await fetchDocumentDetails(
@@ -225,7 +305,7 @@ const BillingDashboard = () => {
                         <Checkbox
                           isChecked={isSelected}
                           onChange={(e) => {
-                            e.stopPropagation(); // ✅ prevents row click interference
+                            e.stopPropagation();
                             setSelectedDoc(isSelected ? null : doc);
                           }}
                         />
@@ -267,12 +347,50 @@ const BillingDashboard = () => {
         )}
       </Box>
 
-      {/* Invoice Modal */}
-      <InvoiceModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        selectedDoc={selectedDoc}
-      />
+      {/* ✅ Conditional Modals */}
+      {selectedModal === "Tax Invoice" && (
+        <InvoiceModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedDoc(null);
+          }}
+          selectedDoc={selectedDoc}
+        />
+      )}
+
+      {selectedModal === "DNS Format" && (
+        <DNSFormat
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedDoc(null);
+          }}
+          selectedDoc={selectedDoc}
+        />
+      )}
+
+      {selectedModal === "New Format" && (
+        <NewFormat
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedDoc(null);
+          }}
+          selectedDoc={selectedDoc}
+        />
+      )}
+
+      {selectedModal === "Random" && (
+        <Random
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedDoc(null);
+          }}
+          selectedDoc={selectedDoc}
+        />
+      )}
     </Box>
   );
 };

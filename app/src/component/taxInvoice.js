@@ -385,7 +385,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         </Text>
                         <Text fontSize="xs">
                           State Name:{" "}
-                          {plants?.Region || plants?.StateName || "-"}
+                          {plants?.State?.name || "-"}
                         </Text>
                         <Text fontSize="xs">GSTIN/UIN: {Tax?.GST || "-"}</Text>
                         <Text fontSize="xs">
@@ -1321,7 +1321,7 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                       </Table>
                     </Flex>
                   </Flex>
-                  <Flex w="100%" mt={1}>
+
                     <Table
                       size="sm"
                       variant="unstyled"
@@ -1333,9 +1333,9 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         <Tr>
                           <Td
                             justifyContent="center"
-                            colSpan={2}
+                            colSpan={4}
                             textAlign="left"
-                            p={2}
+                            p={4}
                           >
                             <b>Total GST (in words):</b>{" "}
                             {pricingElements[0]?.GstInWords || "—"}
@@ -1343,7 +1343,6 @@ const TaxInvoiceModal = ({ isOpen, onClose, selectedDoc = {} }) => {
                         </Tr>
                       </Tbody>
                     </Table>
-                  </Flex>
 
                   {/* Row 4: Footer Section */}
                   <Flex>
